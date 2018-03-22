@@ -464,7 +464,11 @@ Vagrant.configure(2) do |config|
         v.customize ['modifyvm', :id, '--macaddress1', 'auto']
 
         override.vm.network :private_network, ip: machine_type['ip']
-
+        if machine_type['forwarded_port']
+          guest_port  = machine_type['forwarded_port']['guest']
+          host_port   = machine_type['forwarded_port']['host']
+          override.vm.network :forwarded_port, guest: guest_port, host: host_port
+        end
         # guest should sync time if more than 10s off host
         v.customize [ "guestproperty", "set", :id, "/VirtualBox/GuestAdd/VBoxService/--timesync-set-threshold", 1000 ]
       end
